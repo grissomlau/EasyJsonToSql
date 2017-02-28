@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container">
+    <div class="row">
+        <p id="msg"></p>
+    </div>
+    <div class="row">
+        <h2>json</h2>
+    </div>
+    <div class="row">
+        <p>e.g.: {"master":{"inserted":[{"data":{"Name":"test4"}}]}}</p>
+        <textarea class="form-control" id="txtJson"></textarea>
+
+    </div>
+    <div class="row">
+        <input type="button" class="btn" id="btnPost" value="Save" />
+    </div>
+    <div class="row">
+        <h2>json list</h2>
+    </div>
+    <div class="row">
+        <textarea class="form-control" id="txtJsonList" style="min-height:200px"></textarea>
+    </div>
+    <div class="row">
+        <input type="button" class="btn" id="btnGet" value="Get List" />
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#btnPost").click(function () {
+            console.log($("#txtJson").val().toString());
+            var postData = JSON.parse($("#txtJson").val());
+            console.log(postData);
+            console.log(JSON.stringify(postData));
+            var jsonStr = JSON.stringify(postData);
+            postData = $("#txtJson").val();
+            $.post("http://localhost:9819/api/user/post", postData, function (data) {
+                //$("#txtJsonList").text(JSON.stringify(data));
+                $("#msg").html(data);
+                setTimeout(function () {
+                    $("#msg").html("");
+                }, 10000);
+            });
+        });
+        //
+        $("#btnGet").click(function () {
+            $.get("http://localhost:9819/api/user/get", function (data) {
+                $("#txtJsonList").val(JSON.stringify(data));
+            });
+        });
+    });
+</script>
