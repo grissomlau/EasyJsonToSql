@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EasyJsonToSql</id>
+    <version>1.0</version>
+    <title>EasyJsonTosql</title>
+    <authors>Grissom</authors>
+    <owners>Grissom</owners>
+    <licenseUrl>https://mit-license.org/</licenseUrl>
+    <projectUrl>https://github.com/grissomlau/EasyJsonToSql</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>把 json 结构数据解析成标准的 sql， 实现标准化和自动化的增删改查</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>JSON SQL</tags>
+  </metadata>
+</package>
