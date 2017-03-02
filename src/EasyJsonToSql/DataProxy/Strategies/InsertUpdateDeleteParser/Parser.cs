@@ -143,7 +143,8 @@ namespace EasyJsonToSql
                     {
                         f = new DbField() { Name = x.Name, Value = x.Value, OnlyParam = true };
                         this.Data.Builder.Data.AllFields.Add(f);
-                        this.Data.Builder.AndWhere(f.DbName, f.Value);
+                        //this.Data.Builder.AndWhere(f.DbName, f.Value);
+                        this.Data.Builder.AddWhere(" And {0} = @{0}", f.DbName).AddParam(f.ParamName, f.Value);
                     }
                 }
                 else
@@ -157,13 +158,13 @@ namespace EasyJsonToSql
                         f.ParamName = x.ParamName;
                         f.DbName = x.DbName;
                         f.OnlyParam = x.OnlyParam;
-                        this.Data.Builder.AndWhere(f.DbName, f.Value, f.ParamName);
+                        this.Data.Builder.AddWhere(" And {0} = @{0} ", f.DbName).AddParam(f.ParamName, f.Value);
                     }
                     else if (!string.IsNullOrEmpty(x.Value + ""))
                     {
                         f = new DbField() { Name = x.Name, Value = x.Value };
                         this.Data.Builder.Data.AllFields.Add(f);
-                        this.Data.Builder.AndWhere(f.DbName, f.Value);
+                        this.Data.Builder.AddWhere(" And {0} = @{0} ", f.DbName).AddParam(f.ParamName, f.Value);
                     }
                 }
             });

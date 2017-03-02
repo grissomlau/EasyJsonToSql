@@ -47,7 +47,7 @@
         });
         //
         $("#btnGet").click(function () {
-            $.get("http://localhost:9819/api/user/get", function (data) {
+            $.get("http://localhost:9819/api/user/get?name=abc", function (data) {
                 $("#txtJsonList").val(JSON.stringify(data));
             });
         });

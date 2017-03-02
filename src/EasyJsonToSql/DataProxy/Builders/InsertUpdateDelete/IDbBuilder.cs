@@ -14,9 +14,7 @@ namespace EasyJsonToSql
         DbField GetField(string name);
         IDbBuilder AddField(DbField field);
         IDbBuilder AddAllField(DbField field);
-        IDbBuilder AndWhere(string dbName, object value, string paramName = null);
-        IDbBuilder OrWhere(string dbName, object value, string paramName = null);
+        IDbBuilder AddWhere(string sql, params object[] paramArr);
         IDbBuilder AddParam(string paramName, object value);
-        IDbBuilder AddWhere(string sql);
     }
 }

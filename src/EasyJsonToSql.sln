@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyJsonToSqlDemo", "EasyJs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyJsonToSqlTests", "EasyJsonToSqlTests\EasyJsonToSqlTests.csproj", "{C5440BA5-6303-4937-BCC9-B29CE33AC0E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConEasyJsonToSqlDemo", "ConEasyJsonToSqlDemo\ConEasyJsonToSqlDemo.csproj", "{262C517F-AA4E-4928-BBFC-3F22C865A85E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C5440BA5-6303-4937-BCC9-B29CE33AC0E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5440BA5-6303-4937-BCC9-B29CE33AC0E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5440BA5-6303-4937-BCC9-B29CE33AC0E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{262C517F-AA4E-4928-BBFC-3F22C865A85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{262C517F-AA4E-4928-BBFC-3F22C865A85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{262C517F-AA4E-4928-BBFC-3F22C865A85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{262C517F-AA4E-4928-BBFC-3F22C865A85E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

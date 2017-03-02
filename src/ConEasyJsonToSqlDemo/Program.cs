@@ -1,53 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
-using EasyJsonToSql;
-using MySql.Data.MySqlClient;
-using System.Data;
-using Newtonsoft.Json;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Xml.Serialization;
 using System.Text;
+using System.Threading.Tasks;
+using EasyJsonToSql;
+using System.Data;
+using MySql.Data.MySqlClient;
 using System.Collections.Specialized;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace EasyJsonToSql.Demo.Controllers
+namespace ConEasyJsonToSqlDemo
 {
-    public class SysUserController : Controller
+    class Program
     {
-        // GET: SysUser
-        public ActionResult Index()
-        {
-            return View();
-        }
-    }
-    public class UserController : ApiController
-    {
-        // 同时兼容 xml 和 json
-        string sqlXml = @"
-<SqlConfig>
-    <Select>
-        user.*
-    </Select>
-    <From>
-        BasUser user
-    </From>
-    <Where>
-    </Where>
-    <IDs>Id</IDs>
-    <Table>BasUser</Table>
-    <Insert>
-        <Fields>
-            <Field Name=""Name"" IsIgnore=""false""></Field>
-        </Fields>
-    </Insert>
-</SqlConfig>
-            ";
-
-        string sqlJson = @"
+        const string sqlJson = @"
 {
     ""Select"":""user.*"",
     ""From"":""BasUser user"",
@@ -66,9 +33,31 @@ namespace EasyJsonToSql.Demo.Controllers
         }
     }
 ";
+        const string cnnStr = "server=192.168.10.127;database=easyjrm_demo;user=root;pwd=root";
+        static void Main(string[] args)
+        {
+            // 插入数据
+            var postJson = @"{""master"":{""inserted"":[{""data"":{""Name"":""abc1""}}]}}";
+            var affectRows = Post(postJson);
+            Console.WriteLine("影响行数: " + affectRows);
+            Console.WriteLine("press any key to select where name like abc records ...");
+            Console.ReadKey();
 
-        string cnnStr = "server=192.168.10.127;database=easyjrm_demo;user=root;pwd=root";
-        public dynamic Get(string name)
+            // 查询数据
+            var nameValues = new NameValueCollection();
+            nameValues.Add("name", "abc");
+            var dt = Get(nameValues);
+            Console.WriteLine();
+            Console.WriteLine("查询数据结果: ");
+            Console.WriteLine();
+            Console.Write(JsonConvert.SerializeObject(dt));
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("press any key to exit ...");
+            Console.ReadKey();
+        }
+
+        public static DataTable Get(NameValueCollection nameValues)
         {
             var dt = new DataTable();
 
@@ -78,12 +67,11 @@ namespace EasyJsonToSql.Demo.Controllers
             // 用 json 的配置
             var sqlconfig = JsonConvert.DeserializeObject<SqlConfig>(sqlJson);
             var sqlSb = new StringBuilder();
-            var nameValues = new NameValueCollection();
-            nameValues.Add("name", name);
             var builder = new Proxy().ToSelectBuilder(sqlconfig, nameValues);
+
             var builderData = builder.Data;
             sqlSb.AppendFormat("Select {0} From {1} Where {2}", builderData.Select, builderData.From, builderData.Where);
-         
+
             using (var da = new MySqlDataAdapter(sqlSb.ToString(), cnnStr))
             {
                 da.Fill(dt);
@@ -91,14 +79,9 @@ namespace EasyJsonToSql.Demo.Controllers
             return dt;
         }
 
-        public dynamic Post()
+        public static int Post(string postJson)
         {
-            var json = "";
-            using (StreamReader sr = new StreamReader(HttpContext.Current.Request.InputStream))
-            {
-                json = sr.ReadToEnd();
-            }
-            var jobj = JObject.Parse(json);
+            var jobj = JObject.Parse(postJson);
             // 用 xml 的配置
             // var sqlconfig = LoadFromXml<SqlConfig>(sqlXml);
 
@@ -136,17 +119,5 @@ namespace EasyJsonToSql.Demo.Controllers
             }
             return affectCount;
         }
-
-        static T LoadFromXml<T>(string xml)
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(xml);
-            MemoryStream ms = new MemoryStream(bytes, 0, bytes.Length);
-            var sqllSetting = xmlSerializer.Deserialize(ms);
-            return (T)sqllSetting;
-        }
-
     }
-
-
 }

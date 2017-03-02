@@ -14,8 +14,8 @@ namespace EasyJsonToSql
         ISelectBuilder SetFrom(string from);
         ISelectBuilder ReplaceFrom(string oldValue, string newValue);
         ISelectBuilder ReplaceSelect(string oldValue, string newValue);
-        ISelectBuilder OrWhere(string dbName, object value, string paramName = null);
-        ISelectBuilder AndWhere(string dbName, object value, string paramName = null);
+        //ISelectBuilder OrWhere(string dbName, object value, string paramName = null);
+        //ISelectBuilder AndWhere(string dbName, object value, string paramName = null);
         ISelectBuilder AddParam(string paramName, object value);
         ISelectBuilder AddWhere(string AndOrWhere);
         ISelectBuilder AddGroupBy(string groupBy);

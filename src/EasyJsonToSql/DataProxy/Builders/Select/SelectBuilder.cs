@@ -38,21 +38,21 @@ namespace EasyJsonToSql
             return this;
         }
 
-        public ISelectBuilder OrWhere(string name, object value, string paramName = null)
-        {
-            paramName = !string.IsNullOrEmpty(paramName) ? paramName : name.Replace('.', '_');
-            this.Data.Wheres.Add(new DbField() { Name = name, ParamName = paramName, LogicalKey = LogicalKeyType.Or });
-            this.AddParam(paramName, value);
-            return this;
-        }
+        //public ISelectBuilder OrWhere(string name, object value, string paramName = null)
+        //{
+        //    paramName = !string.IsNullOrEmpty(paramName) ? paramName : name.Replace('.', '_');
+        //    this.Data.Wheres.Add(new DbField() { Name = name, ParamName = paramName, LogicalKey = LogicalKeyType.Or });
+        //    this.AddParam(paramName, value);
+        //    return this;
+        //}
 
-        public ISelectBuilder AndWhere(string name, object value, string paramName = null)
-        {
-            paramName = !string.IsNullOrEmpty(paramName) ? paramName : name.Replace('.', '_');
-            this.Data.Wheres.Add(new DbField() { Name = name, ParamName = paramName, LogicalKey = LogicalKeyType.And });
-            this.AddParam(paramName, value);
-            return this;
-        }
+        //public ISelectBuilder AndWhere(string name, object value, string paramName = null)
+        //{
+        //    paramName = !string.IsNullOrEmpty(paramName) ? paramName : name.Replace('.', '_');
+        //    this.Data.Wheres.Add(new DbField() { Name = name, ParamName = paramName, LogicalKey = LogicalKeyType.And });
+        //    this.AddParam(paramName, value);
+        //    return this;
+        //}
 
 
         public ISelectBuilder AddWhere(string AndOrWhere)
@@ -63,11 +63,15 @@ namespace EasyJsonToSql
 
         public ISelectBuilder AddParam(string paramName, object value)
         {
-            if (this.Data.Params.Any(x => x.ParamName.Trim() == paramName.Trim()))
+            var para = this.Data.Params.FirstOrDefault(x => x.ParamName.Trim() == paramName.Trim());
+            if (para != null)
             {
-                throw new Exception("Params already exist " + paramName + ", please assign another name for this added param!");
+                //throw new Exception("Params already exist " + paramName + ", please assign another name for this added param!");
+                para.Value = value;
             }
-            this.Data.Params.Add(new DbField { Name = paramName, Value = value, ParamName = paramName });
+            else {
+                this.Data.Params.Add(new DbField { Name = paramName, Value = value, ParamName = paramName });
+            }
             return this;
         }
 
