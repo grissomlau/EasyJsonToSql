@@ -1,8 +1,117 @@
 # EasyJsonToSql
 把 json 结构数据解析成标准的 sql， 实现标准化和自动化的增删改查
 
+###Kick Start
+1. 假设有一张表
+```sql
+CREATE TABLE `BasUser` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+);
+```
+ <!---->
+2. 后台配置 sqlconfig
+```csharp
+    const string sqlJson = @"
+    {
+        ""Select"":""user.*"",
+        ""From"":""BasUser user"",
+        ""Where"":{
+            ""Fields"":[
+                {""Name"":""Name"",""Cp"":""like""}
+            ]
+        },
+        ""OrderBy"":{""Default"":""Id""},
+        ""ID"":""Id"",
+        ""Table"":""BasUser"",
+        ""Insert"":{
+            ""Fields"":[
+                {""Name"":""Name"",""IsIgnore"":""false""}
+                ]
+            }
+        }
+    ";
+``` 
 
+ <!---->
+3. 查询 reqeust url: ```http://localhost:9819/api/user/get?name=test`` 
+```csharp
+        public dynamic Get(string name)
+        {
+            var dt = new DataTable(); 
 
+            // 用 json 的配置
+            var sqlconfig = JsonConvert.DeserializeObject<SqlConfig>(sqlJson);
+            var sqlSb = new StringBuilder();
+            var nameValues = new NameValueCollection();
+            nameValues.Add("name", name);
+            var builder = new Proxy().ToSelectBuilder(sqlconfig, nameValues);
+            var builderData = builder.Data;
+            sqlSb.AppendFormat("Select {0} From {1} Where {2}", builderData.Select, builderData.From, builderData.Where);
+         
+            using (var da = new MySqlDataAdapter(sqlSb.ToString(), cnnStr))
+            {
+                da.Fill(dt);
+            }
+            return dt;
+        }
+```
+返回结果： ```[{"Id":1,"Name":"test4"},{"Id":2,"Name":"test1"},{"Id":3,"Name":"test1"},{"Id":4,"Name":"test7"}]```
+
+ <!---->
+4. 新增 post url: ```http://localhost:9819/api/user/post``` ， form data: ```{"master":{"inserted":[{"data":{"Name":"test1"}}]}}```
+
+```csharp
+  public dynamic Post()
+        {
+            var json = "";
+            using (StreamReader sr = new StreamReader(HttpContext.Current.Request.InputStream))
+            {
+                json = sr.ReadToEnd();
+            }
+            var jobj = JObject.Parse(json); 
+
+            // json 的配置
+            var sqlconfig = JsonConvert.DeserializeObject<SqlConfig>(sqlJson);
+            var builder = new Proxy().ToDbBuilders(sqlconfig, jobj);
+
+            var insertSqlSb = new StringBuilder();
+            //获取第一个sqlconfig
+            var data = builder[0].Data;
+            insertSqlSb.AppendFormat("insert into {0}(", data.TableName);
+            var valueSqlSb = new StringBuilder();
+            var paras = new List<MySqlParameter>();
+            foreach (var dbField in data.Fields)
+            {
+                // 不是自增的字段才添加
+                if (!dbField.IsId)
+                {
+                    insertSqlSb.AppendFormat("{0}", dbField.DbName);
+                    valueSqlSb.AppendFormat("@{0}", dbField.DbName);
+                    paras.Add(new MySqlParameter("@" + dbField.DbName, dbField.Value));
+                }
+            }
+            insertSqlSb.AppendFormat(") values({0})", valueSqlSb);
+
+            var affectCount = 0;
+            using (var cnn = new MySqlConnection(cnnStr))
+            {
+                using (var cmd = new MySqlCommand(insertSqlSb.ToString(), cnn))
+                {
+                    cnn.Open();
+                    cmd.Parameters.AddRange(paras.ToArray());
+                    affectCount = cmd.ExecuteNonQuery();
+                }
+            }
+            return affectCount;
+        }
+
+```
+
+###上面可看到 get 和 post 方法是脱离业务的，所有业务都在 sqlJson 配置和 前端返回的 json 数据，从而实现了后台配置化操作数据库，不需创建额外的对象，就可以把前端返回的json 数据， 直接持久化到数据库了。
+
+## 简介
 ###Proxy 
 这个类是 EasyJsonToSql 入口，用来获取 SelectBuilder 和 DbBuilder 对象。
 ####方法
