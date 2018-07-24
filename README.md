@@ -1,7 +1,7 @@
 # EasyJsonToSql
 把 json 结构数据解析成标准的 sql， 实现标准化和自动化的增删改查
 
-###Kick Start
+### Kick Start
 1. 假设有一张表
 ```sql
 CREATE TABLE `BasUser` (
@@ -109,12 +109,12 @@ CREATE TABLE `BasUser` (
 
 ```
 
-###上面可看到 get 和 post 方法是脱离业务的，所有业务都在 sqlJson 配置和 前端返回的 json 数据，从而实现了后台配置化操作数据库，不需创建额外的对象，就可以把前端返回的json 数据， 直接持久化到数据库了。
+### 上面可看到 get 和 post 方法是脱离业务的，所有业务都在 sqlJson 配置和 前端返回的 json 数据，从而实现了后台配置化操作数据库，不需创建额外的对象，就可以把前端返回的json 数据， 直接持久化到数据库了。
 
 ## 简介
-###Proxy 
+### Proxy 
 这个类是 EasyJsonToSql 入口，用来获取 SelectBuilder 和 DbBuilder 对象。
-####方法
+#### 方法
 
 1. 获取 SelectBuilder
 
@@ -156,12 +156,12 @@ CREATE TABLE `BasUser` (
 
 ```
 
-###SelectBuilder
+### SelectBuilder
 该类负责处理查询分析，把 json 转换成查询的 sql。
-####关键属性
+#### 关键属性
 1. Data[SelectBuilderData]： 生成的 sql 对象。
 
-####常用方法
+#### 常用方法
 1. AddWhere: 添加 where 条件 sql, 
 
 ```csharp 
@@ -171,7 +171,7 @@ CREATE TABLE `BasUser` (
 
 2. AddParam: 添加参数, ```builder.AddParam("Id",1)``` 
 
-####用法演示
+#### 用法演示
 
 ```csharp
 
@@ -180,12 +180,12 @@ var sql = string.format("Select {0} From {1} Where {2}", data.Select, data.From,
 
 ```
 
-###DbBuilder
+### DbBuilder
 该类负责处理增删改分析，把 json 转换成增删改的 sql。
 #### 关键属性
 1. Data[BuilderData]: 生成的 sql 对象。
 
-####常用方法
+#### 常用方法
 1. AddChild: 添加子表对象。
 2. AddWhere: 添加 where 条件 sql;  
 ```csharp
@@ -195,11 +195,11 @@ var sql = string.format("Select {0} From {1} Where {2}", data.Select, data.From,
  <!-- continue counter --> 
 3. AddParam: 添加参数， ```builder.AddParam("Id",1)```; 
 
-###SqlConfig
+### SqlConfig
 该类保存 select、from、where、insert、update、delete， 以及子表、依赖关系、自增字段、主键等 sql 相关对象，标准化 sql 配置以便脱离具体业务。  
 用来初始化 SelectBuilder 和 DBBuilder， 实现标准化的增删改查操作。   
  上面就是用 json 配置的来反射出 SqlConfig, ```  var sqlconfig = JsonConvert.DeserializeObject<SqlConfig>(sqlJson);```
-####关键字段
+#### 关键字段
 ```csharp
 public class SqlConfig
 {
@@ -349,7 +349,7 @@ public class SqlConfig
 
 }
 ```
-####用法
+#### 用法
 1. xml 配置
 ```csharp
 string sqlXml = @"
